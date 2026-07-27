@@ -15,8 +15,8 @@ struct ProductsListView: View {
 
     private var displayedProducts: [Product] {
         viewModel.filteredProducts.filter { product in
-            let catMatch = selectedCategory == "All" || product.category?.capitalized == selectedCategory
-            let favMatch = !showFavoritesOnly || favoritesManager.isFavorite(product.id)
+            let catMatch = self.selectedCategory == "All" || product.category?.capitalized == self.selectedCategory
+            let favMatch = !self.showFavoritesOnly || self.favoritesManager.isFavorite(product.id)
             return catMatch && favMatch
         }
     }
@@ -84,8 +84,8 @@ struct ProductsListView: View {
                                 .fontWeight(.medium)
                                 .padding(.horizontal, 14)
                                 .padding(.vertical, 6)
-                                .background(selectedCategory == category ? Color.purple : Color(.systemGray5))
-                                .foregroundColor(selectedCategory == category ? .white : .primary)
+                                .background(self.selectedCategory == category ? Color.purple : Color(.systemGray5))
+                                .foregroundColor(self.selectedCategory == category ? .white : .primary)
                                 .cornerRadius(16)
                         }
                     }
@@ -96,7 +96,7 @@ struct ProductsListView: View {
 
             // Product grid
             ScrollView {
-                if displayedProducts.isEmpty {
+                if self.displayedProducts.isEmpty {
                     AnyView(
                         VStack(spacing: 12) {
                             Spacer().frame(height: 40)
@@ -111,10 +111,10 @@ struct ProductsListView: View {
                 } else {
                     AnyView(
                         VStack(spacing: 15) {
-                            ForEach(0..<(displayedProducts.count + 1) / 2, id: \.self) { index in
+                            ForEach(0..<(self.displayedProducts.count + 1) / 2, id: \.self) { index in
                                 ProductRowView(
-                                    firstProduct: displayedProducts[index * 2],
-                                    secondProduct: (index * 2 + 1 < displayedProducts.count) ? displayedProducts[index * 2 + 1] : nil
+                                    firstProduct: self.displayedProducts[index * 2],
+                                    secondProduct: (index * 2 + 1 < self.displayedProducts.count) ? self.displayedProducts[index * 2 + 1] : nil
                                 )
                             }
                         }
@@ -130,8 +130,8 @@ struct ProductsListView: View {
             Button(action: {
                 self.showFavoritesOnly.toggle()
             }) {
-                Image(systemName: showFavoritesOnly ? "heart.fill" : "heart")
-                    .foregroundColor(showFavoritesOnly ? .red : .primary)
+                Image(systemName: self.showFavoritesOnly ? "heart.fill" : "heart")
+                    .foregroundColor(self.showFavoritesOnly ? .red : .primary)
             }
 
             NavigationLink(destination: CartView().environmentObject(self.cartManager)) {
@@ -139,9 +139,9 @@ struct ProductsListView: View {
                     ZStack(alignment: .topTrailing) {
                         Image(systemName: "cart")
                             .font(.body)
-                        if cartManager.totalItemCount > 0 {
-                            Text("\(cartManager.totalItemCount)")
-                                .font(.caption2)
+                        if self.cartManager.totalItemCount > 0 {
+                            Text("\(self.cartManager.totalItemCount)")
+                                .font(.title)
                                 .fontWeight(.bold)
                                 .foregroundColor(.white)
                                 .frame(width: 18, height: 18)
