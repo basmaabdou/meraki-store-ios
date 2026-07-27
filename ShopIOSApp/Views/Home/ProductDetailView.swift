@@ -2,13 +2,12 @@ import SwiftUI
 
 struct ProductDetailView: View {
     let product: Product
-    @ObservedObject var cartManager: CartManager // 👈 نستخدم ObservedObject لضمان استقرار الربط عند التمرير المباشر
+    @ObservedObject var cartManager: CartManager
     @State private var quantity = 1
     @State private var showAddedAlert = false
     @State private var addedQuantity = 0
     @State private var showCart = false
 
-    // Initializer صريح يمنع خطأ Compilation تماماً
     init(product: Product, cartManager: CartManager) {
         self.product = product
         self.cartManager = cartManager
@@ -57,7 +56,7 @@ struct ProductDetailView: View {
 
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-                        Text(product.brand ?? product.category?.capitalized ?? "عام")
+                        Text(product.brand ?? product.category?.capitalized ?? "General")
                             .font(.caption)
                             .padding(.horizontal, 10)
                             .padding(.vertical, 4)
@@ -86,7 +85,7 @@ struct ProductDetailView: View {
 
                     Divider()
 
-                    Text("Info about product :")
+                    Text("About this product")
                         .font(.headline)
 
                     Text(product.description)
@@ -162,26 +161,5 @@ struct ProductDetailView: View {
         }
         .navigationBarTitle(Text(product.title), displayMode: .inline)
         .navigationBarItems(trailing: cartBarButton)
-    }
-}
-
-struct ProductDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        ProductDetailView(
-            product: Product(
-                id: 1,
-                title: "Sample",
-                description: "Sample desc",
-                price: 9.99,
-                discountPercentage: 0,
-                rating: 4.5,
-                stock: 10,
-                brand: "Brand",
-                category: "Category",
-                thumbnail: "",
-                images: []
-            ),
-            cartManager: CartManager() // 👈 مرري CartManager() هنا أيضاً
-        )
     }
 }

@@ -41,8 +41,7 @@ struct AsyncImageWrapper: View {
     }
     
     private func loadImage() {
-        // إذا كان الرابط يحتوي على .webp، نقوم بتغليفه بمحول صور مجاني ليعيده بصيغة PNG يفهمها iOS 13
-        let finalUrlString: String
+         let finalUrlString: String
         if urlString.contains(".webp") {
             finalUrlString = "https://wsrv.nl/?url=\(urlString)&output=png"
         } else {

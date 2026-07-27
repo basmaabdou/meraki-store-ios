@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CartView: View {
     @EnvironmentObject var cartManager: CartManager
-    @State private var showingCheckoutAlert = false
+    @State private var showingClearAlert = false
 
     private var content: AnyView {
         if cartManager.items.isEmpty {
@@ -59,6 +59,16 @@ struct CartView: View {
                 .padding(.horizontal)
 
                 HStack {
+                    Text("Shipping Fee")
+                        .font(.body)
+                    Spacer()
+                    Text("$\(cartManager.shippingFee, specifier: "%.2f")")
+                        .font(.body)
+                        .fontWeight(.medium)
+                }
+                .padding(.horizontal)
+
+                HStack {
                     Text("Tax (8%)")
                         .font(.body)
                     Spacer()
@@ -82,13 +92,11 @@ struct CartView: View {
                 }
                 .padding(.horizontal)
 
-                Button(action: {
-                    self.showingCheckoutAlert = true
-                }) {
+                NavigationLink(destination: CheckoutView()) {
                     HStack {
                         Spacer()
                         Image(systemName: "bag.fill")
-                        Text("Checkout")
+                        Text("Proceed to Checkout")
                             .fontWeight(.bold)
                         Spacer()
                     }
@@ -99,15 +107,6 @@ struct CartView: View {
                 }
                 .padding(.horizontal)
                 .padding(.bottom, 20)
-                .alert(isPresented: $showingCheckoutAlert) {
-                    Alert(
-                        title: Text("Checkout"),
-                        message: Text("Total: $\(cartManager.totalPrice, specifier: "%.2f")\n\nThank you for your purchase!"),
-                        dismissButton: .default(Text("OK")) {
-                            self.cartManager.clearCart()
-                        }
-                    )
-                }
             }
             .padding(.vertical, 8)
         }
@@ -116,64 +115,23 @@ struct CartView: View {
     var body: some View {
         content
             .navigationBarTitle("Cart (\(cartManager.totalItemCount))", displayMode: .inline)
-    }
-}
-
-struct CartItemRow: View {
-    let item: CartItem
-    @EnvironmentObject var cartManager: CartManager
-
-    var body: some View {
-        HStack(spacing: 12) {
-            AsyncImageWrapper(urlString: item.product.thumbnail)
-                .frame(width: 70, height: 70)
-                .cornerRadius(8)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(item.product.title)
-                    .font(.body)
-                    .fontWeight(.medium)
-                    .lineLimit(2)
-
-                Text("$\(item.product.price, specifier: "%.2f")")
-                    .font(.subheadline)
-                    .fontWeight(.bold)
-                    .foregroundColor(.purple)
-
-                HStack(spacing: 12) {
-                    Button(action: {
-                        self.cartManager.updateQuantity(product: self.item.product, newQuantity: self.item.quantity - 1)
-                    }) {
-                        Image(systemName: "minus.circle")
-                            .foregroundColor(.purple)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-
-                    Text("\(item.quantity)")
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .frame(minWidth: 24)
-
-                    Button(action: {
-                        self.cartManager.updateQuantity(product: self.item.product, newQuantity: self.item.quantity + 1)
-                    }) {
-                        Image(systemName: "plus.circle")
-                            .foregroundColor(.purple)
-                    }
-                    .buttonStyle(PlainButtonStyle())
+            .navigationBarItems(trailing:
+                Button(action: {
+                    self.showingClearAlert = true
+                }) {
+                    Text("Clear")
+                        .foregroundColor(.red)
                 }
+            )
+            .alert(isPresented: $showingClearAlert) {
+                Alert(
+                    title: Text("Clear Cart"),
+                    message: Text("Remove all items from your cart?"),
+                    primaryButton: .destructive(Text("Clear")) {
+                        self.cartManager.clearCart()
+                    },
+                    secondaryButton: .cancel()
+                )
             }
-
-            Spacer()
-
-            Button(action: {
-                self.cartManager.removeFromCart(product: self.item.product)
-            }) {
-                Image(systemName: "trash")
-                    .foregroundColor(.red)
-            }
-            .buttonStyle(PlainButtonStyle())
-        }
-        .padding(.vertical, 4)
     }
 }

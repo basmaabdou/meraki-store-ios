@@ -12,7 +12,7 @@ struct LoginView: View {
             GeometryReader { geometry in
                 ScrollView {
                     VStack(spacing: 25) {
-                        // Header Section
+                        // Brand Header
                         VStack(spacing: 10) {
                             Image(systemName: "bag.fill")
                                 .resizable()
@@ -24,7 +24,7 @@ struct LoginView: View {
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
 
-                            Text("سجّلي الدخول للبدء بالتسوق")
+                            Text("Sign in to start shopping")
                                 .font(.subheadline)
                                 .foregroundColor(.secondary)
                         }
@@ -32,17 +32,28 @@ struct LoginView: View {
 
                         // Input Fields
                         VStack(spacing: 15) {
-                            TextField("اسم المستخدم (مثل: kminchelle)", text: self.$viewModel.username)
-                                .padding()
-                                .background(Color(.secondarySystemBackground))
-                                .cornerRadius(12)
-                                .autocapitalization(.none)
-                                .disableAutocorrection(true)
+                            HStack(spacing: 12) {
+                                Image(systemName: "envelope.fill")
+                                    .foregroundColor(.purple)
+                                    .frame(width: 20)
+                                TextField("Email", text: self.$viewModel.email)
+                                    .autocapitalization(.none)
+                                    .disableAutocorrection(true)
+                                    .keyboardType(.emailAddress)
+                            }
+                            .padding()
+                            .background(Color(.secondarySystemBackground))
+                            .cornerRadius(12)
 
-                            SecureField("كلمة المرور (مثل: 0lelpassword)", text: self.$viewModel.password)
-                                .padding()
-                                .background(Color(.secondarySystemBackground))
-                                .cornerRadius(12)
+                            HStack(spacing: 12) {
+                                Image(systemName: "lock.fill")
+                                    .foregroundColor(.purple)
+                                    .frame(width: 20)
+                                SecureField("Password", text: self.$viewModel.password)
+                            }
+                            .padding()
+                            .background(Color(.secondarySystemBackground))
+                            .cornerRadius(12)
                         }
                         .padding(.horizontal)
 
@@ -54,15 +65,14 @@ struct LoginView: View {
                             self.buttonContentView
                         }
                         .padding(.horizontal)
-                        .disabled(self.viewModel.username.isEmpty || self.viewModel.password.isEmpty)
+                        .disabled(self.viewModel.email.isEmpty || self.viewModel.password.isEmpty)
                         
                         Spacer()
                     }
-                    .frame(minHeight: geometry.size.height) // ملء ارتفاع الشاشة بالكامل
+                    .frame(minHeight: geometry.size.height)
                 }
             }
             .background(Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all))
-            // إغلاق الكيبورد عند الضغط على أي مكان فارغ بالشاشة
             .onTapGesture {
                 self.dismissKeyboard()
             }
@@ -76,21 +86,19 @@ struct LoginView: View {
             }
             .alert(isPresented: $showAlert) { () -> Alert in
                 Alert(
-                    title: Text("خطأ"),
+                    title: Text("Error"),
                     message: Text(self.errorMessage),
-                    dismissButton: .default(Text("حسناً"))
+                    dismissButton: .default(Text("OK"))
                 )
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())
     }
 
-    // إغلاق لوحة المفاتيح برمجياً في iOS 13
     private func dismissKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 
-    // استخراج واجهة الزر لتجنب أخطاء ViewBuilder في iOS 13
     private var buttonContentView: AnyView {
         if case .loading = viewModel.state {
             return AnyView(
@@ -107,7 +115,7 @@ struct LoginView: View {
             return AnyView(
                 HStack {
                     Spacer()
-                    Text("تسجيل الدخول")
+                    Text("Log In")
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                     Spacer()
@@ -117,21 +125,5 @@ struct LoginView: View {
                 .cornerRadius(12)
             )
         }
-    }
-}
-
-// MARK: - مكون ActivityIndicator للتوافق مع iOS 13
-struct ActivityIndicator: UIViewRepresentable {
-    let isAnimating: Bool
-    let style: UIActivityIndicatorView.Style
-
-    func makeUIView(context: Context) -> UIActivityIndicatorView {
-        let indicator = UIActivityIndicatorView(style: style)
-        indicator.color = .white
-        return indicator
-    }
-
-    func updateUIView(_ uiView: UIActivityIndicatorView, context: Context) {
-        isAnimating ? uiView.startAnimating() : uiView.stopAnimating()
     }
 }

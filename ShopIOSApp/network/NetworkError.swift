@@ -1,6 +1,5 @@
 import Foundation
 
-/// قائمة الأخطاء المحتملة أثناء الاتصال بالشبكة أو معالجة البيانات
 enum NetworkError: LocalizedError {
     case badURL
     case invalidResponse
@@ -13,19 +12,19 @@ enum NetworkError: LocalizedError {
     var errorDescription: String? {
         switch self {
         case .badURL:
-            return "الرابط المستخدم غير صالح."
+            return "Invalid URL."
         case .invalidResponse:
-            return "استجابة الخادم غير صالحة."
+            return "Invalid server response."
         case .serverError(let statusCode):
-            return "خطأ في الخادم برمز استجابة: \(statusCode)."
+            return "Server error with status code: \(statusCode)."
         case .decodingError:
-            return "فشل في فك تشفير البيانات."
+            return "Failed to decode data."
         case .keychainError(let status):
-            return "فشل في عملية الحفظ الآمن (Keychain Status: \(status))."
+            return "Keychain operation failed (Status: \(status))."
         case .unauthorized:
-            return "اسم المستخدم أو كلمة المرور غير صحيحة."
+            return "Invalid username or password."
         case .unknown:
-            return "حدث خطأ غير معروف."
+            return "An unknown error occurred."
         }
     }
 }

@@ -9,22 +9,22 @@ enum AuthState {
 
 class AuthViewModel: ObservableObject {
     @Published var state: AuthState = .idle
-    @Published var username = ""
+    @Published var email = ""
     @Published var password = ""
     
     private let loginURL = "https://dummyjson.com/auth/login"
     
     func login() {
-        guard !username.isEmpty && !password.isEmpty else {
-            self.state = .failed("الرجاء إدخال اسم المستخدم وكلمة المرور.")
+        guard !email.isEmpty && !password.isEmpty else {
+            self.state = .failed("Please enter your email and password.")
             return
         }
         
         self.state = .loading
         
-        let credentials = ["username": username, "password": password]
+        let credentials = ["username": email, "password": password]
         guard let bodyData = try? JSONSerialization.data(withJSONObject: credentials) else {
-            self.state = .failed("خطأ في معالجة البيانات.")
+            self.state = .failed("Failed to process request data.")
             return
         }
         

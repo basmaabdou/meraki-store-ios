@@ -30,7 +30,6 @@ class ProductsViewModel: ObservableObject {
         }
     }
     
-    /// تصفية المنتجات محلياً بناءً على نص البحث
     var filteredProducts: [Product] {
         if searchText.isEmpty {
             return allProducts

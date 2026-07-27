@@ -1,20 +1,9 @@
 import Foundation
-import SwiftUI
-
-struct CartItem: Identifiable {
-    let id: Int
-    let product: Product
-    var quantity: Int
-
-    init(product: Product, quantity: Int) {
-        self.id = product.id
-        self.product = product
-        self.quantity = quantity
-    }
-}
 
 class CartManager: ObservableObject {
     @Published var items: [CartItem] = []
+
+    let shippingFee: Double = 15.0
 
     var subtotal: Double {
         items.reduce(0) { $0 + ($1.product.price * Double($1.quantity)) }
@@ -25,7 +14,7 @@ class CartManager: ObservableObject {
     }
 
     var totalPrice: Double {
-        subtotal + tax
+        subtotal + tax + shippingFee
     }
 
     var totalItemCount: Int {
@@ -55,5 +44,17 @@ class CartManager: ObservableObject {
 
     func clearCart() {
         items.removeAll()
+    }
+}
+
+struct CartItem: Identifiable {
+    let id: Int
+    let product: Product
+    var quantity: Int
+
+    init(product: Product, quantity: Int) {
+        self.id = product.id
+        self.product = product
+        self.quantity = quantity
     }
 }

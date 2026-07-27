@@ -2,7 +2,7 @@
 import Security
 import Foundation
 
-/// فئة مساعدة لحفظ وقراءة وحذف الـ Token بأمان داخل نظام الـ iOS Keychain
+/// Helper class for securely saving, reading, and deleting tokens using the iOS Keychain
 class KeychainHelper {
     static let shared = KeychainHelper()
     private init() {}
@@ -10,11 +10,11 @@ class KeychainHelper {
     private let service = "com.aurashop.app"
     private let account = "jwt-auth-token"
     
-    /// حفظ الـ Token بأمان
+    /// Save token securely to Keychain
     func saveToken(_ token: String) -> Result<Void, NetworkError> {
         guard let data = token.data(using: .utf8) else { return .failure(.unknown) }
         
-        // استعلام للبحث والمسح أولاً لتجنب التكرار
+        // Delete existing item first to avoid duplicates
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: service,
@@ -23,7 +23,7 @@ class KeychainHelper {
         
         SecItemDelete(query as CFDictionary)
         
-        // استعلام الحفظ الجديد
+        // Create save query
         var attributes = query
         attributes[kSecValueData as String] = data
         
@@ -34,7 +34,7 @@ class KeychainHelper {
         return .success(())
     }
     
-    /// استرجاع الـ Token المحفوظ
+    /// Retrieve saved token from Keychain
     func getToken() -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
@@ -53,7 +53,7 @@ class KeychainHelper {
         return nil
     }
     
-    /// حذف الـ Token عند تسجيل الخروج
+    /// Delete token from Keychain (e.g. on logout)
     func deleteToken() {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
