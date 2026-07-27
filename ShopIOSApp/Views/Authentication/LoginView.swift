@@ -6,90 +6,110 @@ struct LoginView: View {
     
     @State private var showAlert = false
     @State private var errorMessage = ""
+    @State private var isPasswordVisible = false
 
     var body: some View {
         NavigationView {
             GeometryReader { geometry in
                 ScrollView {
-                    VStack(spacing: 25) {
-                        // Brand Header
-                        VStack(spacing: 10) {
-                            Image(systemName: "bag.fill")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 70, height: 70)
-                                .foregroundColor(.purple)
+                    VStack(spacing: 0) {
+                        Spacer(minLength: 0)
 
-                            Text("AuraShop")
-                                .font(.largeTitle)
-                                .fontWeight(.bold)
-
-                            Text("Sign in to start shopping")
-                                .font(.subheadline)
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.top, 40)
-
-                        // Input Fields
-                        VStack(spacing: 15) {
-                            HStack(spacing: 12) {
-                                Image(systemName: "envelope.fill")
+                        VStack(spacing: 25) {
+                            // Brand Header
+                            VStack(spacing: 10) {
+                                Image(systemName: "bag.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 70, height: 70)
                                     .foregroundColor(.purple)
-                                    .frame(width: 20)
-                                TextField("Email", text: self.$viewModel.email)
-                                    .autocapitalization(.none)
-                                    .disableAutocorrection(true)
-                                    .keyboardType(.emailAddress)
-                            }
-                            .padding()
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(12)
 
-                            HStack(spacing: 12) {
-                                Image(systemName: "lock.fill")
-                                    .foregroundColor(.purple)
-                                    .frame(width: 20)
-                                SecureField("Password", text: self.$viewModel.password)
+                                Text("VibeMarket")
+                                    .font(.largeTitle)
+                                    .fontWeight(.bold)
+
+                                Text("Sign in to start shopping")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
                             }
-                            .padding()
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(12)
+
+                            // Input Fields
+                            VStack(spacing: 15) {
+                                HStack(spacing: 12) {
+                                    Image(systemName: "envelope.fill")
+                                        .foregroundColor(.purple)
+                                        .frame(width: 20)
+                                    TextField("Email", text: self.$viewModel.email)
+                                        .autocapitalization(.none)
+                                        .disableAutocorrection(true)
+                                        .keyboardType(.emailAddress)
+                                }
+                                .padding()
+                                .background(Color(.secondarySystemBackground))
+                                .cornerRadius(12)
+
+                                HStack(spacing: 12) {
+                                    Image(systemName: "lock.fill")
+                                        .foregroundColor(.purple)
+                                        .frame(width: 20)
+                                    if isPasswordVisible {
+                                        TextField("Password", text: self.$viewModel.password)
+                                            .autocapitalization(.none)
+                                            .disableAutocorrection(true)
+                                    } else {
+                                        SecureField("Password", text: self.$viewModel.password)
+                                    }
+                                    Button(action: {
+                                        self.isPasswordVisible.toggle()
+                                    }) {
+                                        Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                                            .foregroundColor(.gray)
+                                    }
+                                    .buttonStyle(PlainButtonStyle())
+                                }
+                                .padding()
+                                .background(Color(.secondarySystemBackground))
+                                .cornerRadius(12)
+                            }
+                            .padding(.horizontal)
+
+                            // Submit Button
+                            Button(action: {
+                                self.dismissKeyboard()
+                                self.viewModel.login()
+                            }) {
+                                self.buttonContentView
+                            }
+                            .padding(.horizontal)
+                            .disabled(self.viewModel.email.isEmpty || self.viewModel.password.isEmpty)
                         }
+                        .frame(maxWidth: 340)
                         .padding(.horizontal)
 
-                        // Submit Button
-                        Button(action: {
-                            self.dismissKeyboard()
-                            self.viewModel.login()
-                        }) {
-                            self.buttonContentView
-                        }
-                        .padding(.horizontal)
-                        .disabled(self.viewModel.email.isEmpty || self.viewModel.password.isEmpty)
-                        
-                        Spacer()
+                        Spacer(minLength: 0)
                     }
                     .frame(minHeight: geometry.size.height)
+                    .frame(maxWidth: .infinity)
                 }
-            }
-            .background(Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all))
-            .onTapGesture {
-                self.dismissKeyboard()
-            }
-            .navigationBarTitle("", displayMode: .inline)
-            .navigationBarHidden(true)
-            .onReceive(viewModel.$state) { newState in
-                if case .failed(let message) = newState {
-                    self.errorMessage = message
-                    self.showAlert = true
+                .background(Color(.systemGroupedBackground).edgesIgnoringSafeArea(.all))
+                .onTapGesture {
+                    self.dismissKeyboard()
                 }
-            }
-            .alert(isPresented: $showAlert) { () -> Alert in
-                Alert(
-                    title: Text("Error"),
-                    message: Text(self.errorMessage),
-                    dismissButton: .default(Text("OK"))
-                )
+                .navigationBarTitle("", displayMode: .inline)
+                .navigationBarHidden(true)
+                .onReceive(viewModel.$state) { newState in
+                    if case .failed(let message) = newState {
+                        self.errorMessage = message
+                        self.showAlert = true
+                    }
+                }
+                .alert(isPresented: $showAlert) { () -> Alert in
+                    Alert(
+                        title: Text("Error"),
+                        message: Text(self.errorMessage),
+                        dismissButton: .default(Text("OK"))
+                    )
+                }
             }
         }
         .navigationViewStyle(StackNavigationViewStyle())

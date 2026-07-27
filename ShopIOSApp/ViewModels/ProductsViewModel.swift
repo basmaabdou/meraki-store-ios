@@ -12,7 +12,7 @@ class ProductsViewModel: ObservableObject {
     @Published var searchText: String = ""
     
     private let productsURL = "https://dummyjson.com/products"
-    private var allProducts: [Product] = []
+    var allProducts: [Product] = []
     
     func fetchProducts() {
         self.state = .loading

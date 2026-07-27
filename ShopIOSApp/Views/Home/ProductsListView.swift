@@ -4,7 +4,6 @@ struct ProductsListView: View {
     @ObservedObject private var viewModel = ProductsViewModel()
     @EnvironmentObject var cartManager: CartManager
     @EnvironmentObject var favoritesManager: FavoritesManager
-    @State private var showFavoritesOnly = false
     @State private var selectedCategory: String = "All"
 
     private var categories: [String] {
@@ -15,9 +14,9 @@ struct ProductsListView: View {
 
     private var displayedProducts: [Product] {
         viewModel.filteredProducts.filter { product in
-            let catMatch = self.selectedCategory == "All" || product.category?.capitalized == self.selectedCategory
-            let favMatch = !self.showFavoritesOnly || self.favoritesManager.isFavorite(product.id)
-            return catMatch && favMatch
+            selectedCategory == "All"
+                || product.category?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+                   == selectedCategory.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
         }
     }
 
@@ -65,6 +64,16 @@ struct ProductsListView: View {
                 Image(systemName: "magnifyingglass")
                     .foregroundColor(.gray)
                 TextField("Search products...", text: $viewModel.searchText)
+                if !viewModel.searchText.isEmpty {
+                    Button(action: {
+                        self.viewModel.searchText = ""
+                        self.selectedCategory = "All"
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                }
             }
             .padding(10)
             .background(Color(.systemGray6))
@@ -127,11 +136,9 @@ struct ProductsListView: View {
 
     private var trailingNavBarItems: AnyView {
         AnyView(HStack(spacing: 16) {
-            Button(action: {
-                self.showFavoritesOnly.toggle()
-            }) {
-                Image(systemName: self.showFavoritesOnly ? "heart.fill" : "heart")
-                    .foregroundColor(self.showFavoritesOnly ? .red : .primary)
+            NavigationLink(destination: FavoritesView(products: viewModel.allProducts)) {
+                Image(systemName: "heart")
+                    .foregroundColor(.primary)
             }
 
             NavigationLink(destination: CartView().environmentObject(self.cartManager)) {
@@ -141,10 +148,9 @@ struct ProductsListView: View {
                             .font(.body)
                         if self.cartManager.totalItemCount > 0 {
                             Text("\(self.cartManager.totalItemCount)")
-                                .font(.title)
-                                .fontWeight(.bold)
+                                .font(.system(size: 10, weight: .bold))
                                 .foregroundColor(.white)
-                                .frame(width: 18, height: 18)
+                                .frame(width: 16, height: 16)
                                 .background(Color.red)
                                 .clipShape(Circle())
                                 .offset(x: 8, y: -8)
@@ -158,7 +164,7 @@ struct ProductsListView: View {
     var body: some View {
         NavigationView {
             stateContentView
-                .navigationBarTitle("AuraShop")
+                .navigationBarTitle("VibeMarket")
                 .navigationBarItems(trailing: trailingNavBarItems)
                 .onAppear {
                     if case .idle = self.viewModel.state {
