@@ -16,10 +16,10 @@ struct CartView: View {
         VStack(spacing: 20) {
             Spacer()
             Image(systemName: "cart.fill")
-                .font(.system(size: 70))
-                .foregroundColor(.purple.opacity(0.5))
+            .font(.system(size: 70))
+            .foregroundColor(Color.purple.opacity(0.5))
             Text("Your cart is empty")
-                .font(.title2)
+                .font(.title)
                 .fontWeight(.semibold)
             Text("Browse products and add items to your cart")
                 .font(.body)
@@ -72,11 +72,11 @@ struct CartView: View {
 
                 HStack {
                     Text("Total")
-                        .font(.title3)
+                        .font(.title)
                         .fontWeight(.bold)
                     Spacer()
                     Text("$\(cartManager.totalPrice, specifier: "%.2f")")
-                        .font(.title3)
+                        .font(.title)
                         .fontWeight(.bold)
                         .foregroundColor(.purple)
                 }

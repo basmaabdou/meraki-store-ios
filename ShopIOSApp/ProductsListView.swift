@@ -2,7 +2,7 @@ import SwiftUI
 
 struct ProductsListView: View {
     @ObservedObject private var viewModel = ProductsViewModel()
-    
+    @EnvironmentObject var cartManager: CartManager
     // استخراج switch خارج body وتغليف الناتج بـ AnyView لحل قيود Xcode 11/SwiftUI 1.0
     private var stateContentView: AnyView {
         switch viewModel.state {
@@ -67,25 +67,28 @@ struct ProductsListView: View {
     }
 }
 
-// MARK: - مكون الصف لعرض منتجين بجانب بعضهما متوافق مع iOS 13
+
 struct ProductRowView: View {
     let firstProduct: Product
     let secondProduct: Product?
+    @EnvironmentObject var cartManager: CartManager
     
     var body: some View {
-        HStack(spacing: 15) {
-            NavigationLink(destination: ProductDetailView(product: firstProduct)) {
+       HStack(spacing: 15) {
+        NavigationLink(destination: ProductDetailView(product: firstProduct, cartManager: self.cartManager)) {
                 ProductCardView(product: firstProduct)
             }
             .buttonStyle(PlainButtonStyle())
             
-            if secondProduct != nil {
-                NavigationLink(destination: ProductDetailView(product: secondProduct!)) {
-                    ProductCardView(product: secondProduct!)
+        Group {
+                if secondProduct != nil {
+                    NavigationLink(destination: ProductDetailView(product: secondProduct!, cartManager: self.cartManager)) {
+                        ProductCardView(product: secondProduct!)
+                    }
+                    .buttonStyle(PlainButtonStyle())
+                } else {
+                    Spacer()
                 }
-                .buttonStyle(PlainButtonStyle())
-            } else {
-                Spacer()
             }
         }
     }

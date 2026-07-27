@@ -2,16 +2,25 @@ import SwiftUI
 
 struct ProductDetailView: View {
     let product: Product
-    @EnvironmentObject var cartManager: CartManager
+    @ObservedObject var cartManager: CartManager // 👈 نستخدم ObservedObject لضمان استقرار الربط عند التمرير المباشر
     @State private var quantity = 1
     @State private var showAddedAlert = false
     @State private var addedQuantity = 0
     @State private var showCart = false
 
+    // Initializer صريح يمنع خطأ Compilation تماماً
+    init(product: Product, cartManager: CartManager) {
+        self.product = product
+        self.cartManager = cartManager
+    }
+
     private var cartBarButton: AnyView {
         AnyView(
             ZStack {
-                NavigationLink(destination: CartView(), isActive: $showCart) {
+                NavigationLink(
+                    destination: CartView().environmentObject(self.cartManager),
+                    isActive: $showCart
+                ) {
                     EmptyView()
                 }
                 .hidden()
@@ -24,12 +33,13 @@ struct ProductDetailView: View {
                             .font(.body)
                         if cartManager.totalItemCount > 0 {
                             Text("\(cartManager.totalItemCount)")
-                                .font(.caption2)
+                                .font(.caption)
+                                .fontWeight(.bold)
                                 .foregroundColor(.white)
                                 .padding(4)
                                 .background(Color.red)
                                 .clipShape(Circle())
-                                .offset(x: 8, y: -8)
+                                .offset(x: 10, y: -10)
                         }
                     }
                 }
@@ -47,7 +57,6 @@ struct ProductDetailView: View {
 
                 VStack(alignment: .leading, spacing: 12) {
                     HStack {
-
                         Text(product.brand ?? product.category?.capitalized ?? "عام")
                             .font(.caption)
                             .padding(.horizontal, 10)
@@ -61,10 +70,11 @@ struct ProductDetailView: View {
                         HStack(spacing: 4) {
                             Image(systemName: "star.fill")
                                 .foregroundColor(.yellow)
-                             Text(String(format: "%.1f", product.rating ?? 0.0))
+                            Text(String(format: "%.1f", product.rating ?? 0.0))
                                 .fontWeight(.bold)
                         }
                     }
+                    
                     Text(product.title)
                         .font(.title)
                         .fontWeight(.bold)
@@ -98,12 +108,12 @@ struct ProductDetailView: View {
                             if self.quantity > 1 { self.quantity -= 1 }
                         }) {
                             Image(systemName: "minus.circle")
-                                .font(.title2)
+                                .font(.title)
                         }
                         .buttonStyle(PlainButtonStyle())
 
                         Text("\(quantity)")
-                            .font(.title2)
+                            .font(.title)
                             .fontWeight(.semibold)
                             .frame(minWidth: 32)
 
@@ -111,7 +121,7 @@ struct ProductDetailView: View {
                             self.quantity += 1
                         }) {
                             Image(systemName: "plus.circle")
-                                .font(.title2)
+                                .font(.title)
                         }
                         .buttonStyle(PlainButtonStyle())
                     }
@@ -152,5 +162,26 @@ struct ProductDetailView: View {
         }
         .navigationBarTitle(Text(product.title), displayMode: .inline)
         .navigationBarItems(trailing: cartBarButton)
+    }
+}
+
+struct ProductDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        ProductDetailView(
+            product: Product(
+                id: 1,
+                title: "Sample",
+                description: "Sample desc",
+                price: 9.99,
+                discountPercentage: 0,
+                rating: 4.5,
+                stock: 10,
+                brand: "Brand",
+                category: "Category",
+                thumbnail: "",
+                images: []
+            ),
+            cartManager: CartManager() // 👈 مرري CartManager() هنا أيضاً
+        )
     }
 }
