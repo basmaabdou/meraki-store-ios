@@ -16,8 +16,8 @@ struct CartView: View {
         VStack(spacing: 20) {
             Spacer()
             Image(systemName: "cart.fill")
-            .font(.system(size: 70))
-            .foregroundColor(Color.purple.opacity(0.5))
+                .font(.system(size: 70))
+                .foregroundColor(Color.purple.opacity(0.5))
             Text("Your cart is empty")
                 .font(.title)
                 .fontWeight(.semibold)
@@ -92,7 +92,8 @@ struct CartView: View {
                 }
                 .padding(.horizontal)
 
-                NavigationLink(destination: CheckoutView()) {
+                // Injection added here
+                NavigationLink(destination: CheckoutView().environmentObject(self.cartManager)) {
                     HStack {
                         Spacer()
                         Image(systemName: "bag.fill")

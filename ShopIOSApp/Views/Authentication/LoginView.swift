@@ -52,7 +52,7 @@ struct LoginView: View {
                                     Image(systemName: "lock.fill")
                                         .foregroundColor(.purple)
                                         .frame(width: 20)
-                                    if isPasswordVisible {
+                                    if self.isPasswordVisible {
                                         TextField("Password", text: self.$viewModel.password)
                                             .autocapitalization(.none)
                                             .disableAutocorrection(true)
@@ -62,7 +62,7 @@ struct LoginView: View {
                                     Button(action: {
                                         self.isPasswordVisible.toggle()
                                     }) {
-                                        Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
+                                        Image(systemName: self.isPasswordVisible ? "eye.slash" : "eye")
                                             .foregroundColor(.gray)
                                     }
                                     .buttonStyle(PlainButtonStyle())
@@ -97,13 +97,13 @@ struct LoginView: View {
                 }
                 .navigationBarTitle("", displayMode: .inline)
                 .navigationBarHidden(true)
-                .onReceive(viewModel.$state) { newState in
+                .onReceive(self.viewModel.$state) { newState in
                     if case .failed(let message) = newState {
                         self.errorMessage = message
                         self.showAlert = true
                     }
                 }
-                .alert(isPresented: $showAlert) { () -> Alert in
+                .alert(isPresented: self.$showAlert) { () -> Alert in
                     Alert(
                         title: Text("Error"),
                         message: Text(self.errorMessage),
@@ -120,7 +120,7 @@ struct LoginView: View {
     }
 
     private var buttonContentView: AnyView {
-        if case .loading = viewModel.state {
+        if case .loading = self.viewModel.state {
             return AnyView(
                 HStack {
                     Spacer()

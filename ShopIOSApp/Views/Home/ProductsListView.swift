@@ -20,6 +20,108 @@ struct ProductsListView: View {
         }
     }
 
+    private var gridViewID: AnyHashable {
+        displayedProducts.map { $0.id }
+    }
+
+    // 💡 تفكيك الحسابات خارج الـ View لمنع الـ Type Checker Timeout
+    private var rowCount: Int {
+        (displayedProducts.count + 1) / 2
+    }
+
+    private func getFirstProduct(for index: Int) -> Product {
+        displayedProducts[index * 2]
+    }
+
+    private func getSecondProduct(for index: Int) -> Product? {
+        let secondIndex = index * 2 + 1
+        return secondIndex < displayedProducts.count ? displayedProducts[secondIndex] : nil
+    }
+
+    // MARK: - Subviews
+
+    private var searchBarView: some View {
+        HStack {
+            Image(systemName: "magnifyingglass")
+                .foregroundColor(.gray)
+            TextField("Search products...", text: $viewModel.searchText)
+            if !viewModel.searchText.isEmpty {
+                Button(action: {
+                    self.viewModel.searchText = ""
+                    self.selectedCategory = "All"
+                }) {
+                    Image(systemName: "xmark.circle.fill")
+                        .foregroundColor(.gray)
+                }
+                .buttonStyle(PlainButtonStyle())
+            }
+        }
+        .padding(10)
+        .background(Color(.systemGray6))
+        .cornerRadius(10)
+        .padding(.horizontal)
+        .padding(.top, 8)
+    }
+
+    private var categoryChipsView: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 8) {
+                ForEach(categories, id: \.self) { category in
+                    Button(action: {
+                        self.selectedCategory = category
+                    }) {
+                        Text(category)
+                            .font(.caption)
+                            .fontWeight(.medium)
+                            .padding(.horizontal, 14)
+                            .padding(.vertical, 6)
+                            .background(self.selectedCategory == category ? Color.purple : Color(.systemGray5))
+                            .foregroundColor(self.selectedCategory == category ? .white : .primary)
+                            .cornerRadius(16)
+                    }
+                }
+            }
+            .padding(.horizontal)
+        }
+        .padding(.vertical, 8)
+    }
+
+    private var productsGridView: some View {
+        ScrollView {
+            if self.displayedProducts.isEmpty {
+                VStack(spacing: 12) {
+                    Spacer().frame(height: 40)
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 40))
+                        .foregroundColor(.gray)
+                    Text("No products found")
+                        .font(.headline)
+                        .foregroundColor(.secondary)
+                }
+            } else {
+                VStack(spacing: 15) {
+                    // 💡 أصبحت خفيفة وسريعة جداً بدون أي معادلات أو Ternaries
+                    ForEach(0..<rowCount, id: \.self) { index in
+                        ProductRowView(
+                            firstProduct: self.getFirstProduct(for: index),
+                            secondProduct: self.getSecondProduct(for: index)
+                        )
+                    }
+                }
+                .padding()
+                .id(gridViewID)
+            }
+        }
+    }
+
+    private var successContent: some View {
+        VStack(spacing: 0) {
+            searchBarView
+            categoryChipsView
+            productsGridView
+        }
+    }
+
     private var stateContentView: AnyView {
         switch viewModel.state {
         case .idle, .loading:
@@ -57,86 +159,15 @@ struct ProductsListView: View {
         }
     }
 
-    private var successContent: some View {
-        VStack(spacing: 0) {
-            // Search bar
-            HStack {
-                Image(systemName: "magnifyingglass")
-                    .foregroundColor(.gray)
-                TextField("Search products...", text: $viewModel.searchText)
-                if !viewModel.searchText.isEmpty {
-                    Button(action: {
-                        self.viewModel.searchText = ""
-                        self.selectedCategory = "All"
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
-                    }
-                    .buttonStyle(PlainButtonStyle())
-                }
-            }
-            .padding(10)
-            .background(Color(.systemGray6))
-            .cornerRadius(10)
-            .padding(.horizontal)
-            .padding(.top, 8)
-
-            // Category chips
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
-                    ForEach(categories, id: \.self) { category in
-                        Button(action: {
-                            self.selectedCategory = category
-                        }) {
-                            Text(category)
-                                .font(.caption)
-                                .fontWeight(.medium)
-                                .padding(.horizontal, 14)
-                                .padding(.vertical, 6)
-                                .background(self.selectedCategory == category ? Color.purple : Color(.systemGray5))
-                                .foregroundColor(self.selectedCategory == category ? .white : .primary)
-                                .cornerRadius(16)
-                        }
-                    }
-                }
-                .padding(.horizontal)
-            }
-            .padding(.vertical, 8)
-
-            // Product grid
-            ScrollView {
-                if self.displayedProducts.isEmpty {
-                    AnyView(
-                        VStack(spacing: 12) {
-                            Spacer().frame(height: 40)
-                            Image(systemName: "magnifyingglass")
-                                .font(.system(size: 40))
-                                .foregroundColor(.gray)
-                            Text("No products found")
-                                .font(.headline)
-                                .foregroundColor(.secondary)
-                        }
-                    )
-                } else {
-                    AnyView(
-                        VStack(spacing: 15) {
-                            ForEach(0..<(self.displayedProducts.count + 1) / 2, id: \.self) { index in
-                                ProductRowView(
-                                    firstProduct: self.displayedProducts[index * 2],
-                                    secondProduct: (index * 2 + 1 < self.displayedProducts.count) ? self.displayedProducts[index * 2 + 1] : nil
-                                )
-                            }
-                        }
-                        .padding()
-                    )
-                }
-            }
-        }
-    }
-
     private var trailingNavBarItems: AnyView {
         AnyView(HStack(spacing: 16) {
-            NavigationLink(destination: FavoritesView(products: viewModel.allProducts)) {
+            NavigationLink(destination: FavoritesView(
+                products: self.viewModel.allProducts,
+                favoritesManager: self.favoritesManager,
+                cartManager: self.cartManager
+            )
+            .environmentObject(self.cartManager)
+            .environmentObject(self.favoritesManager)) {
                 Image(systemName: "heart")
                     .foregroundColor(.primary)
             }
