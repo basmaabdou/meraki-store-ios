@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		247C763B3018ABC400D8FA4D /* SplashView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 247C763A3018ABC400D8FA4D /* SplashView.swift */; };
 		249D3E0F30177F3A00A0B759 /* ProductsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249D3DEA30177F3A00A0B759 /* ProductsViewModel.swift */; };
 		249D3E1030177F3A00A0B759 /* AuthViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249D3DEB30177F3A00A0B759 /* AuthViewModel.swift */; };
 		249D3E1130177F3A00A0B759 /* KeychainHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 249D3DEC30177F3A00A0B759 /* KeychainHelper.swift */; };
@@ -36,7 +37,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		243DC2DC2FF118DC007FD31A /* ShopIOSApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShopIOSApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		243DC2DC2FF118DC007FD31A /* Meraki Store.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Meraki Store.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		247C763A3018ABC400D8FA4D /* SplashView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashView.swift; sourceTree = "<group>"; };
 		249D3DEA30177F3A00A0B759 /* ProductsViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProductsViewModel.swift; sourceTree = "<group>"; };
 		249D3DEB30177F3A00A0B759 /* AuthViewModel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AuthViewModel.swift; sourceTree = "<group>"; };
 		249D3DEC30177F3A00A0B759 /* KeychainHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainHelper.swift; sourceTree = "<group>"; };
@@ -88,9 +90,17 @@
 		243DC2DD2FF118DC007FD31A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				243DC2DC2FF118DC007FD31A /* ShopIOSApp.app */,
+				243DC2DC2FF118DC007FD31A /* Meraki Store.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		247C76393018AB8D00D8FA4D /* Splash */ = {
+			isa = PBXGroup;
+			children = (
+				247C763A3018ABC400D8FA4D /* SplashView.swift */,
+			);
+			path = Splash;
 			sourceTree = "<group>";
 		};
 		249D3DE830177F3A00A0B759 /* ShopIOSApp */ = {
@@ -160,6 +170,7 @@
 		249D3DFC30177F3A00A0B759 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				247C76393018AB8D00D8FA4D /* Splash */,
 				249D3DFD30177F3A00A0B759 /* Home */,
 				249D3E0330177F3A00A0B759 /* Components */,
 				249D3E0630177F3A00A0B759 /* Cart */,
@@ -224,7 +235,7 @@
 			);
 			name = ShopIOSApp;
 			productName = ShopIOSApp;
-			productReference = 243DC2DC2FF118DC007FD31A /* ShopIOSApp.app */;
+			productReference = 243DC2DC2FF118DC007FD31A /* Meraki Store.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -295,6 +306,7 @@
 				249D3E2630177F3B00A0B759 /* LoginView.swift in Sources */,
 				249D3E2330177F3B00A0B759 /* CheckoutView.swift in Sources */,
 				249D3E0F30177F3A00A0B759 /* ProductsViewModel.swift in Sources */,
+				247C763B3018ABC400D8FA4D /* SplashView.swift in Sources */,
 				249D3E1030177F3A00A0B759 /* AuthViewModel.swift in Sources */,
 				249D3E1130177F3A00A0B759 /* KeychainHelper.swift in Sources */,
 				249D3E2430177F3B00A0B759 /* CartItemRow.swift in Sources */,
@@ -445,7 +457,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.basma.ShopIOSApp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Meraki Store";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
@@ -464,7 +476,7 @@
 					"@executable_path/Frameworks",
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.basma.ShopIOSApp;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Meraki Store";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

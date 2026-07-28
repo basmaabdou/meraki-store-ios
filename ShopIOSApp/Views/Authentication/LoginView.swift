@@ -24,7 +24,7 @@ struct LoginView: View {
                                     .frame(width: 70, height: 70)
                                     .foregroundColor(.purple)
 
-                                Text("VibeMarket")
+                                Text("Meraki Store")
                                     .font(.largeTitle)
                                     .fontWeight(.bold)
 

@@ -195,7 +195,7 @@ struct ProductsListView: View {
     var body: some View {
         NavigationView {
             stateContentView
-                .navigationBarTitle("VibeMarket")
+                .navigationBarTitle("Meraki Store")
                 .navigationBarItems(trailing: trailingNavBarItems)
                 .onAppear {
                     if case .idle = self.viewModel.state {
