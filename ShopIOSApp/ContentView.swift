@@ -18,11 +18,10 @@ struct ContentView: View {
     // MARK: - Splash View
     private var splashView: some View {
         return ZStack {
-            // استخدام edgesIgnoringSafeArea للتوافق مع الإصدارات السابقة
             Color(red: 245/255, green: 243/255, blue: 238/255)
                 .edgesIgnoringSafeArea(.all)
 
-            Image("logo") // اسم صورة اللوجو في Assets
+            Image("logo")
                 .resizable()
                 .scaledToFit()
                 .frame(width: 190, height: 190)

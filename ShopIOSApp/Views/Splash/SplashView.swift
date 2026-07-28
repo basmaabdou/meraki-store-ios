@@ -7,7 +7,6 @@ struct SplashView: View {
 
     var body: some View {
         if isActive {
-            // تمرير viewModel المفقود
             return AnyView(LoginView(viewModel: authViewModel))
         } else {
             return AnyView(
