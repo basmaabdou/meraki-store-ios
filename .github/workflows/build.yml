@@ -1,0 +1,36 @@
+name: Build iOS App
+
+on:
+  push:
+    branches: [ main, master, dev ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-13
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Select Xcode Version
+      run: sudo xcode-select -s /Applications/Xcode_15.2.app/Contents/Developer
+
+    - name: Build iOS App
+      run: |
+        xcodebuild -project ShopIOSApp.xcodeproj \
+                   -scheme ShopIOSApp \
+                   -sdk iphoneos \
+                   -configuration Release \
+                   -derivedDataPath build \
+                   CODE_SIGNING_ALLOWED=NO \
+                   build
+
+    - name: Compress App
+      run: |
+        cd build/Build/Products/Release-iphoneos
+        zip -r ShopIOSApp.zip ShopIOSApp.app
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: ShopIOSApp-Zip
+        path: build/Build/Products/Release-iphoneos/ShopIOSApp.zip
