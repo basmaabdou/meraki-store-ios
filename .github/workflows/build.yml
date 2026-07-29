@@ -26,7 +26,7 @@ jobs:
     - name: Compress App
       run: |
         cd build/Build/Products/Release-iphoneos
-        zip -r ShopIOSApp.zip ShopIOSApp.app
+        zip -r ShopIOSApp.zip *.app
 
     - name: Upload Build Artifact
       uses: actions/upload-artifact@v4
